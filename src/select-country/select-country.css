@@ -1,0 +1,31 @@
+#dropdown-item-button {
+  min-width: 125px;
+  max-width: 100%;
+}
+
+.dropdown-menu {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  bottom: 0;
+  max-height: 200px;
+  width: 390px;
+}
+
+.flex-wrapper {
+  display: flex;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+.Search {
+  position: sticky;
+  top: 0;
+  height: 30px;
+}
+
+.dropdown-menu {
+  padding: 0;
+}

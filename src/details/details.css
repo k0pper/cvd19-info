@@ -1,0 +1,90 @@
+.Details {
+  height: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.Details > * > div {
+  margin-bottom: 15px;
+  text-align: center;
+  border-radius: 5px;
+  padding: 12px;
+  border-bottom: solid 1px rgba(185, 185, 185, 0.55);;
+
+}
+
+.details-header {
+  position: sticky;
+  top: 0px;
+  padding-top: 60px;
+  background: white;
+  z-index: 5;
+  text-align: center;
+}
+
+.details-heading {
+  font-size: 22px;
+}
+
+h1,h2,h3 {
+  margin: 0 !important;
+}
+
+h1 {
+  font-size: 14px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+h2 {
+  font-size: 26px;
+}
+
+.Details div h2 {
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+}
+
+.TotalCases h2 {
+  color: black;
+}
+
+.ActiveCases h2{
+  color: red;
+}
+
+.Deaths h2{
+  color: brown;
+}
+
+.Recovered h2{
+  color: green;
+}
+
+#back {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 10;
+}
+
+.pulsate {
+  animation: pulse 1.5s ease-out;
+  -webkit-animation: pulse 1.5s ease-out;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@keyframes pulse {
+	0% {
+    transform: scale(0.9);
+	}
+
+	70% {
+    transform: scale(1);
+	}
+
+	100% {
+    transform: scale(0.9);
+	}
+}
