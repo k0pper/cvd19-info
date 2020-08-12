@@ -71,11 +71,11 @@ export default class CountriesDropdown extends React.Component {
           {countries.sort((c1, c2) => { return c1.Country > c2.Country ? 1 : (-1) }).map((country, index) => {
             return (
               <div className="flex-wrapper" key={country.ISO2}              >
-                <img alt="flag" width="25" height="25" src={`https://www.countryflags.io/${country.ISO2}/flat/32.png`} style={{ flex: 1 }}></img>
+                <img alt="flag" height="35" src={`https://www.countryflags.io/${country.ISO2}/flat/32.png`} style={{ flex: 2 }}></img>
                 <Dropdown.Item
                   eventKey={country.ISO2}
                   as="button"
-                  style={{ height: 25, flex: 12 }}>
+                  style={{ height: 25, flex: 16 }}>
                   {country.Country} ({country.ISO2})
                 </Dropdown.Item>
               </div>

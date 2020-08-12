@@ -25,18 +25,40 @@ export default class Details extends React.Component {
     let sorted = this.state.liveCountries.sort((a, b) => {
       return a[attribute] < b[attribute] ? 1 : -1
     });
-    return this.state.liveCountries.map(c => c.CountryCode).indexOf(code);
+    return this.state.liveCountries.map(c => c.CountryCode).indexOf(code) + 1;
   }
 
   fetchDetails(code) {
-    const URL = `https://api.covid19api.com/dayone/country/${code}`;
-    fetch(URL)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          countryHistory: data
+    if (code.toLowerCase() != 'us') {
+      const URL = `https://api.covid19api.com/dayone/country/${code}`;
+      fetch(URL)
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            countryHistory: data
+          });
         });
-      });
+    }
+    else if (code.toLowerCase() == 'us') {
+      const US_URL = 'https://api.covidtracking.com/v1/us/daily.json';
+      fetch(US_URL)
+        .then(response => response.json())
+        .then((responseArray) => {
+          responseArray = responseArray.map((c) => {
+            return {
+              Active: c.positive - c.death - c.recovered,
+              Confirmed: c.positive,
+              Deaths: c.death,
+              Recovered: c.recovered,
+              Date: c.lastModified,
+              Province: ""
+            }
+          })
+          this.setState({
+            countryHistory: responseArray
+          })
+        })
+    }
   };
 
   fetchSummary() {
@@ -55,16 +77,25 @@ export default class Details extends React.Component {
   }
 
   renderHistory() {
-    let code = this.state.countryHistory[0].CountryCode;
-    let countryHistory = this.state.countryHistory.filter((entry) => entry.Province === "")
+    const code = this.props.match.params.countryCode;
 
+    let country = this.state.liveCountries.find((c) => { return c.CountryCode == code })
 
-    let totalCases = this.dotSeperated(countryHistory[countryHistory.length - 1].Confirmed);
-    let activeCases = this.dotSeperated(countryHistory[countryHistory.length - 1].Active);
-    let deaths = this.dotSeperated(countryHistory[countryHistory.length - 1].Deaths);
-    let recovered = this.dotSeperated(countryHistory[countryHistory.length - 1].Recovered);
-    let date = countryHistory[countryHistory.length - 1].Date;
+    let totalCases = this.dotSeperated(country.TotalConfirmed)
+    let deaths = this.dotSeperated(country.TotalDeaths)
+    let recovered = this.dotSeperated(country.TotalRecovered)
+    let activeCases = this.dotSeperated(country.TotalConfirmed - country.TotalRecovered - country.TotalDeaths)
+
+    let date = country.Date
     let totalCasesRank = this.getRank(code, "TotalConfirmed");
+
+    // let countryHistory = this.state.countryHistory.filter((entry) => entry.Province === "")
+    // let totalCases = this.dotSeperated(countryHistory[countryHistory.length - 1].Confirmed);
+    // let activeCases = this.dotSeperated(countryHistory[countryHistory.length - 1].Active);
+    // let deaths = this.dotSeperated(countryHistory[countryHistory.length - 1].Deaths);
+    // let recovered = this.dotSeperated(countryHistory[countryHistory.length - 1].Recovered);
+    // let date = countryHistory[countryHistory.length - 1].Date;
+    // let totalCasesRank = this.getRank(code, "TotalConfirmed");
 
     return (
 
@@ -75,7 +106,7 @@ export default class Details extends React.Component {
         </Link>
 
         <div className="details-header col-lg-12">
-          <h1 className="details-heading">COVID-19 Information: {countryHistory[0].Country}</h1>
+          <h1 className="details-heading">COVID-19 Information: {country.Country}</h1>
           <img alt={`Country Flag`} src={`https://www.countryflags.io/${code}/shiny/64.png`}></img>
           <p>Data from {moment(date).format('LL')}</p>
           <hr />
