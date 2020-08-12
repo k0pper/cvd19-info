@@ -62,7 +62,7 @@ export default class CountriesDropdown extends React.Component {
   render() {
     var countries = this.state.countries;
 
-    countries = countries.filter((c) => { return c.Country.includes(this.state.input) })
+    countries = countries.filter((c) => { return c.Country.toLowerCase().includes(this.state.input.toLowerCase()) })
 
     return (
       <div>
