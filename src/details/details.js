@@ -56,14 +56,14 @@ export default class Details extends React.Component {
 
   renderHistory() {
     let code = this.state.countryHistory[0].CountryCode;
+    let countryHistory = this.state.countryHistory.filter((entry) => entry.Province === "")
 
-    let totalCases = this.dotSeperated(this.state.countryHistory[this.state.countryHistory.length - 1].Confirmed);
-    let activeCases = this.dotSeperated(this.state.countryHistory[this.state.countryHistory.length - 1].Active);
-    let deaths = this.dotSeperated(this.state.countryHistory[this.state.countryHistory.length - 1].Deaths);
-    let recovered = this.dotSeperated(this.state.countryHistory[this.state.countryHistory.length - 1].Recovered);
 
-    let date = this.state.countryHistory[this.state.countryHistory.length - 1].Date;
-
+    let totalCases = this.dotSeperated(countryHistory[countryHistory.length - 1].Confirmed);
+    let activeCases = this.dotSeperated(countryHistory[countryHistory.length - 1].Active);
+    let deaths = this.dotSeperated(countryHistory[countryHistory.length - 1].Deaths);
+    let recovered = this.dotSeperated(countryHistory[countryHistory.length - 1].Recovered);
+    let date = countryHistory[countryHistory.length - 1].Date;
     let totalCasesRank = this.getRank(code, "TotalConfirmed");
 
     return (
@@ -75,7 +75,7 @@ export default class Details extends React.Component {
         </Link>
 
         <div className="details-header col-lg-12">
-          <h1 class="details-heading">COVID-19 Information: {this.state.countryHistory[0].Country}</h1>
+          <h1 className="details-heading">COVID-19 Information: {countryHistory[0].Country}</h1>
           <img alt={`Country Flag`} src={`https://www.countryflags.io/${code}/shiny/64.png`}></img>
           <p>Data from {moment(date).format('LL')}</p>
           <hr />
