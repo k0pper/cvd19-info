@@ -15,6 +15,7 @@ export default class CountriesDropdown extends React.Component {
       countries: [],
       selectedCountryCode: '',
       input: '',
+      ready: false,
     }
     this.handleSelect = this.handleSelect.bind(this);
   }
@@ -24,7 +25,8 @@ export default class CountriesDropdown extends React.Component {
       .then(res => res.json())
       .then((data) => {
         this.setState({
-          countries: data
+          countries: data,
+          ready: true
         });
       })
   }

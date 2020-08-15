@@ -1,7 +1,17 @@
+.horizontal-align-center {
+  text-align: center;
+}
+
+.vertical-align-center {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .Details {
   height: 100%;
   text-align: center;
   margin: 0 auto;
+  padding-top: 15px;
 }
 
 .Details > * > div {
@@ -9,21 +19,33 @@
   text-align: center;
   border-radius: 5px;
   padding: 12px;
-  border-bottom: solid 1px rgba(185, 185, 185, 0.55);;
-
 }
 
 .details-header {
   position: sticky;
   top: 0px;
-  padding-top: 60px;
-  background: white;
+  padding: 15px;
   z-index: 5;
-  text-align: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background: #282828;
+}
+
+.details-header > *{
+  display: inline-block;
+}
+
+.details-header h1, .details-header p{
+  color: white;
+  margin: 0;
 }
 
 .details-heading {
   font-size: 22px;
+}
+
+.data-origin {
+  color: gray !important;
 }
 
 h1,h2,h3 {
@@ -49,6 +71,14 @@ h2 {
   color: black;
 }
 
+.recharts-surface {
+  width: 100%;
+}
+
+.recharts-responsive-container {
+  margin: 0 auto;
+}
+
 .ActiveCases h2{
   color: red;
 }
@@ -62,10 +92,14 @@ h2 {
 }
 
 #back {
-  position: absolute;
-  top: 5px;
-  left: 5px;
+  border-width: 0px;
   z-index: 10;
+}
+
+.TotalCases h3 {
+  font-size: 18px;
+  color: gray;
+  font-weight: 500;
 }
 
 .pulsate {
