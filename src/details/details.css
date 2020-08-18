@@ -122,3 +122,23 @@ h2 {
     transform: scale(0.9);
 	}
 }
+
+.country-before, .country-after {
+  opacity: 0.33;
+  padding: 5px;
+  transition: 250ms;
+}
+
+.country-before:hover, .country-after:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+
+.country-before:hover {
+  transform: translateX(-5px)
+}
+
+.country-after:hover {
+  transform: translateX(5px)
+}

@@ -28,24 +28,14 @@ export default class Details extends React.Component {
   }
 
   getTotalRank(code) {
-    this.state.liveCountries.sort((a, b) => {
-      return a["TotalConfirmed"] < b["TotalConfirmed"] ? 1 : -1
-    });
     return this.state.liveCountries.map(c => c.CountryCode).indexOf(code) + 1;
   }
 
   getActiveRank(code) {
-    this.state.liveCountries.sort((a, b) => {
-      return (a.TotalConfirmed - a.TotalRecovered - a.TotalDeaths) <
-        (b.TotalConfirmed - b.TotalRecovered - b.TotalDeaths) ? 1 : -1;
-    });
     return this.state.liveCountries.map(c => c.CountryCode).indexOf(code) + 1;
   }
 
   getDeathRank(code) {
-    this.state.liveCountries.sort((a, b) => {
-      return a.TotalDeaths < b.TotalDeaths ? 1 : -1;
-    });
     return this.state.liveCountries.map(c => c.CountryCode).indexOf(code) + 1;
   }
 
@@ -91,7 +81,9 @@ export default class Details extends React.Component {
       .then(response => response.json())
       .then(data => {
         this.setState({
-          liveCountries: data.Countries
+          liveCountries: data.Countries.sort((a, b) => {
+            return a["TotalConfirmed"] < b["TotalConfirmed"] ? 1 : -1
+          })
         })
       });
   }
@@ -113,8 +105,8 @@ export default class Details extends React.Component {
   }
 
   getAspectRatio() {
-    if (this.state.width > 1000) return 21.0 / 9.0
-    else if (this.state.width <= 800) return 16.0 / 12.0
+    if (this.state.width < 400) return 1;
+    else return 16 / 9;
   }
 
   formatXAxis(tickItem) {
@@ -150,10 +142,38 @@ export default class Details extends React.Component {
     return ticks;
   }
 
+  renderCountryImg(country) {
+    return (
+      country ?
+        <Link to={`/details/${country.CountryCode}`}>
+          <img className="country-before" alt={`Country Flag`} src={`https://www.countryflags.io/${country.CountryCode}/shiny/32.png`}></img>
+        </Link> : null
+    );
+  }
+
+  renderGraph(data) {
+    return (<ResponsiveContainer width={this.getChartWidth()} aspect={this.getAspectRatio()}>
+      <LineChart width={600} height={300} data={data}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <XAxis dataKey="Date" name="Date" tickFormatter={this.formatXAxis} ticks={this.getXTicks(data)} tick={{ fontSize: 12 }} />
+        <Tooltip labelFormatter={this.tooltipFormatter} className="opa" />
+        <YAxis type="number" dataKey="Total Cases" tickFormatter={this.formatYAxis} tick={{ fontSize: 12 }} domain={[0, data[data.length - 1]["Total Confirmed"]]} />
+        <Line type="monotone" dataKey="Total Cases" stroke="black" dot={{ r: 0 }} activeDot={{ r: 8 }} />
+        <Line type="monotone" dataKey="Active Cases" stroke="red" dot={{ r: 0 }} activeDot={{ r: 8 }} />
+        <Line type="monotone" dataKey="Recovered" stroke="green" dot={{ r: 0 }} activeDot={{ r: 8 }} />
+        <Line type="monotone" dataKey="Deaths" stroke="brown" dot={{ r: 0 }} activeDot={{ r: 8 }} />
+        <Legend />
+      </LineChart>
+    </ResponsiveContainer>)
+  }
+
   renderHistory() {
     const code = this.props.match.params.countryCode;
 
     let country = this.state.liveCountries.find((c) => { return c.CountryCode === code })
+
+    let countryBefore = this.state.liveCountries[this.state.liveCountries.indexOf(country) - 1]
+    let countryAfter = this.state.liveCountries[this.state.liveCountries.indexOf(country) + 1]
 
     let totalCases = this.dotSeperated(country.TotalConfirmed)
     let deaths = this.dotSeperated(country.TotalDeaths)
@@ -166,8 +186,6 @@ export default class Details extends React.Component {
     let deathRank = this.getDeathRank(code);
 
     var data = this.state.countryHistory;
-
-    var size = data.length - 1;
 
     data = this.state.countryHistory
       .map((c) => {
@@ -186,22 +204,22 @@ export default class Details extends React.Component {
 
 
     return (
-
       <div className="wrapper">
-
         <div className="details-header row">
 
-          <div class="col-lg-1 col-md-12 col-sm-12 text-lg-center text-md-center text-sm-center text-center">
+          <div className="col-lg-1 col-md-12 col-sm-12 text-lg-center vertical-align-center text-md-center text-sm-center text-center">
             <Link to="/">
               <button id="back" className="btn btn-outline-secondary">Go Back</button>
             </Link>
           </div>
 
-          <div class="col-lg-1 col-md-12 col-sm-12 vertical-align-center text-lg-center text-md-center text-center">
-            <img alt={`Country Flag`} src={`https://www.countryflags.io/${code}/shiny/64.png`}></img>
+          <div className="col-lg-2 col-md-12 col-sm-12 vertical-align-center text-lg-center text-md-center text-center">
+            {this.renderCountryImg(countryBefore)}
+            <img className="country-current" alt={`Country Flag`} src={`https://www.countryflags.io/${code}/shiny/64.png`}></img>
+            {this.renderCountryImg(countryAfter)}
           </div>
 
-          <div className="col-lg-10 col-md-12 col-sm-12 vertical-align-center text-lg-left text-md-center text-center">
+          <div className="col-lg-9 col-md-12 col-sm-12 vertical-align-center text-lg-left text-md-center text-center">
             <h1 className="details-heading">COVID-19 Information: {country.Country}</h1>
             <p className="data-origin">Data from {moment(date).format('LL')}</p>
           </div>
@@ -220,22 +238,7 @@ export default class Details extends React.Component {
             </div>
 
             <div className="TotalCases col-lg-12 col-md-12 col-sm-12">
-              <ResponsiveContainer width={this.getChartWidth()} aspect={this.getAspectRatio()}>
-
-                <LineChart width={600} height={300} data={data}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <XAxis dataKey="Date" name="Date" tickFormatter={this.formatXAxis} ticks={this.getXTicks(data)} tick={{ fontSize: 12 }} />
-                  <Tooltip labelFormatter={this.tooltipFormatter} className="opa" />
-                  <YAxis type="number" dataKey="Total Cases" tickFormatter={this.formatYAxis} tick={{ fontSize: 12 }} domain={[0, data[data.length - 1]["Total Confirmed"]]} />
-                  <Line type="monotone" dataKey="Total Cases" stroke="black" dot={{ r: 0 }} activeDot={{ r: 8 }} />
-                  <Line type="monotone" dataKey="Active Cases" stroke="red" dot={{ r: 0 }} activeDot={{ r: 8 }} />
-                  <Line type="monotone" dataKey="Recovered" stroke="green" dot={{ r: 0 }} activeDot={{ r: 8 }} />
-                  <Line type="monotone" dataKey="Deaths" stroke="brown" dot={{ r: 0 }} activeDot={{ r: 8 }} />
-                  <Legend />
-                </LineChart>
-
-              </ResponsiveContainer>
-
+              {this.renderGraph(data)}
             </div>
 
             <div className="ActiveCases col-lg-4 col-md-6 col-sm-12">
@@ -261,8 +264,7 @@ export default class Details extends React.Component {
   }
 
   render() {
-    const { countryHistory, liveCountries } = this.state;
-    return countryHistory.length && liveCountries.length ? this.renderHistory() : (
+    return this.state.countryHistory.length && this.state.liveCountries.length ? this.renderHistory() : (
       <div className="wrapper">
         <Link to="/">
           <button id="back" className="btn btn-outline-secondary">Go Back</button>

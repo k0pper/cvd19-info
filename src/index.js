@@ -10,8 +10,8 @@ ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Switch>
+        <Route path="/details/:countryCode" component={Details} />
         <Route path="/" exact component={App} />
-        <Route path="/details/:countryCode" exact component={Details} />
       </Switch>
     </BrowserRouter>
   </React.StrictMode>,
